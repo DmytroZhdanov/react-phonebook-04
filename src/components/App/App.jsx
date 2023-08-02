@@ -23,7 +23,7 @@ export const App = () => {
           <>
             <Filter />
             {filteredContacts.length > 0 ? (
-              <ContactList contacts={filteredContacts} />
+              <ContactList />
             ) : (
               <Message>
                 Sorry, we didn't find any contacts matching your query
