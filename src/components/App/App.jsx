@@ -1,43 +1,13 @@
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getContacts, getFilter } from 'redux/selectors';
 import { ContactForm } from '../ContactForm/ContactForm';
 import { ContactList } from '../ContactList/ContactList';
 import { Filter } from '../Filter/Filter';
 import { Container, Message, Title1, Title2, Wrapper } from './App.styled';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(
-    () => JSON.parse(localStorage.getItem('contacts')) ?? []
-  );
-  const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
-
-  const formSubmitHandler = newContact => {
-    const matchedContact = contacts.find(
-      ({ name }) => name.toLowerCase() === newContact.name.toLowerCase()
-    );
-    if (matchedContact) {
-      alert(`${newContact.name} is already in contacts.`);
-      return;
-    }
-    setContacts([...contacts, newContact]);
-  };
-
-  const filterHandler = filterQuery => {
-    setFilter(filterQuery);
-  };
-
-  const contactDeleteHandler = idToDelete => {
-    setContacts(() => {
-      const newContactsArr = [...contacts].filter(
-        ({ id }) => id !== idToDelete
-      );
-      return newContactsArr;
-    });
-  };
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
 
   const filteredContacts = contacts.filter(({ name }) =>
     name.toLowerCase().includes(filter.toLowerCase())
@@ -46,17 +16,14 @@ export const App = () => {
   return (
     <Container>
       <Title1>Phonebook</Title1>
-      <ContactForm onSubmit={formSubmitHandler} />
+      <ContactForm />
       <Title2>Contacts</Title2>
       <Wrapper>
         {contacts.length > 0 ? (
           <>
-            <Filter filter={filter} onChange={filterHandler} />
+            <Filter />
             {filteredContacts.length > 0 ? (
-              <ContactList
-                contacts={filteredContacts}
-                onDeleteContact={contactDeleteHandler}
-              />
+              <ContactList contacts={filteredContacts} />
             ) : (
               <Message>
                 Sorry, we didn't find any contacts matching your query
